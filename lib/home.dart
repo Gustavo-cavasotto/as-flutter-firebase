@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:login/logout.dart';
 
 void main() => runApp(const HomePage());
 
@@ -98,9 +99,11 @@ class MyHomePage extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.logout, color: Colors.redAccent),
               title: const Text('Log Out'),
-              onTap: () async {
-                await auth.signOut();
-                Navigator.pop(context); // Close the drawer
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LogoutPage()),
+                );
               },
             ),
           ],

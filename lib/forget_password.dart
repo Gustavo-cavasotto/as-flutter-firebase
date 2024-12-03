@@ -24,7 +24,7 @@ class ForgetPasswordPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Reset Password'),
+        title: const Text('Redefinir Senha'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -39,7 +39,7 @@ class ForgetPasswordPage extends StatelessWidget {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () => _resetPassword(context),
-              child: const Text('Reset Password'),
+              child: const Text('Redefinir Senha'),
             ),
             const SizedBox(height: 16.0),
             TextButton(
@@ -49,7 +49,7 @@ class ForgetPasswordPage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => LoginPage()),
                 );
               },
-              child: const Text('Already have an account? Login here'),
+              child: const Text('Já tem uma conta? Faça login aqui'),
             ),
             const SizedBox(height: 16.0),
             TextButton(
@@ -59,7 +59,7 @@ class ForgetPasswordPage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => RegisterPage()),
                 );
               },
-              child: const Text("You don't have a account yet?"),
+              child: const Text('Ainda não possui uma conta?'),
             ),
           ],
         ),

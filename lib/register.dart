@@ -4,24 +4,60 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'login.dart';
 import 'forget_password.dart';
 
-// ignore: use_key_in_widget_constructors
 class RegisterPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   void _registerUser(BuildContext context) async {
     try {
-      // ignore: unused_local_variable
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
+      // Criar conta de usuário
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      // Exibir mensagem de sucesso
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cadastro realizado com sucesso!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Navegar para a página de login
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
       );
     } catch (e) {
-        print('Error: $e');
+      // Exibir mensagem de erro
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao cadastrar: ${_getFirebaseErrorMessage(e)}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
-@override
+  // Método para mapear os erros do Firebase
+  String _getFirebaseErrorMessage(Object error) {
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'email-already-in-use':
+          return 'Este email já está sendo usado.';
+        case 'weak-password':
+          return 'A senha é muito fraca. Use uma senha mais forte.';
+        case 'invalid-email':
+          return 'O email fornecido é inválido.';
+        default:
+          return 'Erro desconhecido. Por favor, tente novamente.';
+      }
+    }
+    return 'Erro inesperado. Verifique sua conexão com a internet.';
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -34,7 +70,7 @@ class RegisterPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Title or Description
+            // Título
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: Text(
@@ -46,12 +82,12 @@ class RegisterPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            // Email TextField
+            // Campo de Email
             TextField(
               controller: emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
-                labelStyle: TextStyle(color: Colors.blueAccent),
+                labelStyle: const TextStyle(color: Colors.blueAccent),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -60,12 +96,12 @@ class RegisterPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16.0),
-            // Password TextField
+            // Campo de Senha
             TextField(
               controller: passwordController,
               decoration: InputDecoration(
-                labelText: 'Password',
-                labelStyle: TextStyle(color: Colors.blueAccent),
+                labelText: 'Senha',
+                labelStyle: const TextStyle(color: Colors.blueAccent),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -75,10 +111,10 @@ class RegisterPage extends StatelessWidget {
               obscureText: true,
             ),
             const SizedBox(height: 24.0),
-            // Register Button
+            // Botão de Cadastro
             ElevatedButton(
               onPressed: () => _registerUser(context),
-              child: const Text('Register'),
+              child: const Text('Cadastrar'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blueAccent,
                 shape: RoundedRectangleBorder(
@@ -88,7 +124,7 @@ class RegisterPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20.0),
-            // "Already have an account?" Text Button
+            // Link para Login
             TextButton(
               onPressed: () {
                 Navigator.push(
@@ -102,7 +138,7 @@ class RegisterPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16.0),
-            // Forgot password Text Button
+            // Link para Recuperar Senha
             TextButton(
               onPressed: () {
                 Navigator.push(

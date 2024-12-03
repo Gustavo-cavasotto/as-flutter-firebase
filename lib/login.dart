@@ -14,16 +14,48 @@ class LoginPage extends StatelessWidget {
   void _loginUser(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
+      // Exibir mensagem de sucesso
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Login realizado com sucesso!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      // Navegar para a HomePage
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } catch (e) {
-      print('Error: $e');
+      // Exibir mensagem de erro
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao fazer login: ${_getFirebaseErrorMessage(e)}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
+  }
+
+  // Método para mapear os erros do Firebase
+  String _getFirebaseErrorMessage(Object error) {
+    if (error is FirebaseAuthException) {
+      print('Error caralho: $error');
+      switch (error.code) {      
+        case 'user-not-found':
+          return 'Usuário não encontrado.';
+        case 'invalid-credential':
+          return 'Senha incorreta.';
+        case 'invalid-email':
+          return 'Email inválido.';
+        default:
+          return 'Erro desconhecido. Por favor, tente novamente.';
+      }
+    }
+    return 'Erro inesperado. Verifique sua conexão com a internet.';
   }
 
   @override
@@ -39,7 +71,6 @@ class LoginPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Title or Description
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: Text(
@@ -51,12 +82,11 @@ class LoginPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            // Email TextField
             TextField(
               controller: emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
-                labelStyle: TextStyle(color: Colors.blueAccent),
+                labelStyle: const TextStyle(color: Colors.blueAccent),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -65,12 +95,11 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16.0),
-            // Password TextField
             TextField(
               controller: passwordController,
               decoration: InputDecoration(
                 labelText: 'Senha',
-                labelStyle: TextStyle(color: Colors.blueAccent),
+                labelStyle: const TextStyle(color: Colors.blueAccent),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -80,7 +109,6 @@ class LoginPage extends StatelessWidget {
               obscureText: true,
             ),
             const SizedBox(height: 24.0),
-            // Login Button
             ElevatedButton(
               onPressed: () => _loginUser(context),
               child: const Text('Login'),
@@ -93,7 +121,6 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20.0),
-            // "Don't have an account?" Text Button
             TextButton(
               onPressed: () {
                 Navigator.push(
@@ -107,7 +134,6 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16.0),
-            // Forgot password Text Button
             TextButton(
               onPressed: () {
                 Navigator.push(
